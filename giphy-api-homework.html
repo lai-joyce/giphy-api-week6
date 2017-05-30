@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Scientific Gifs</title>
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<style>
+		.topicButton {
+			background-color: green;
+			color: white; /* text color */
+			margin-right: 20px;
+			height: 50px;
+			font-size: 22px;
+		}
+
+		.pictureDivClass {
+			float: left;
+			margin-right: 20px;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="screen" class="container" >
+		<div id="topic_buttons">
+			
+		</div>
+		<div id="gifsGoHere"></div>
+
+		<form id="topic-form" >
+	      <label for="topic-input">Add a Topic, Fool!</label>
+	      <input type="text" id="topic-input"><br>
+
+	      <!-- Button triggers new topic to be added -->
+	      <input id="add-topic" type="submit" value="Add a Topic, Fool">
+	    </form>
+	</div>
+
+	
+
+	<script type="text/javascript">
+		
+		$(function() {
+			var topics = ["antibody", "biology", "science", "bacteria", "molecule"];
+
+		
+
+			var $topicButtonsDiv = $("#topic_buttons");
+
+			for(var item in topics) {
+				var $topicButton = $("<button>" + topics[item] + "</button>");
+				$topicButton.attr("class", "topicButton");
+				
+				$topicButton.data("foobar", topics[item]);
+				$topicButton.appendTo($topicButtonsDiv);
+			}
+
+			var displayImages = function() {
+				
+				var topic = $(this).data("foobar");
+
+				var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + topic + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+				$.ajax({url: queryURL, method: "GET"}).done(function(response) {
+						//console.log(response); 
+
+					$("#gifsGoHere").empty();
+					
+					for (var i = 0; i<response.data.length; i++){
+						var pictureDiv = $("<div>");
+						pictureDiv.attr("class", "pictureDivClass");
+						var p = $("<p>").text("Rating: " + response.data[i].rating);
+						var pictureImage = $("<img>");
+
+						var stillUrl = response.data[i].images.fixed_height_still.url;
+						var animatedUrl = response.data[i].images.fixed_height.url;
+						// initialize image source to the still version
+						pictureImage.attr("src", stillUrl);
+						// set the "still" URL
+						pictureImage.data("still", stillUrl);
+						// set the "animated" URL
+						pictureImage.data("animated", animatedUrl);
+						pictureImage.data("mode", "still"); // initialize mode to "still"
+						pictureImage.click(function() {
+							var $thisImage = $(this);
+							var mode = $thisImage.data("mode");
+							if(mode === "still") {
+								$thisImage.attr('src', $thisImage.data("animated"));
+								$thisImage.data("mode", "animated");
+							}
+							else {
+								$thisImage.attr('src', $thisImage.data("still"));
+								$thisImage.data("mode", "still");
+							}
+						});
+						pictureDiv.append(p);
+						pictureDiv.append(pictureImage);
+
+						$("#gifsGoHere").prepend(pictureDiv);
+
+					}
+				});
+				
+			};
+
+			function renderButtons() {
+
+		        // Looping through the array of topics
+
+		        var $topicButtonsDiv = $("#topic_buttons");
+
+		        $topicButtonsDiv.empty();
+
+				for(var item in topics) {
+					var $topicButton = $("<button>" + topics[item] + "</button>");
+					$topicButton.attr("class", "topicButton");
+					
+					$topicButton.data("foobar", topics[item]);
+					$topicButton.appendTo($topicButtonsDiv);
+				}
+		      }
+
+			$("#add-topic").click(function(event) {
+				event.preventDefault();
+
+				var topic = $("#topic-input").val().trim();
+
+				// Adding movie from the textbox to our array
+		        topics.push(topic);
+
+		        // Calling renderButtons which handles the processing of our movie array
+		        renderButtons();
+
+			});
+
+			$(document).on("click", ".topicButton", displayImages);
+
+      // Calling the renderButtons function to display the intial buttons
+      renderButtons();
+
+			
+		});
+		
+
+	</script>
+
+	
+</body>
+</html>
