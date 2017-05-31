@@ -33,11 +33,11 @@
 		<div id="gifsGoHere"></div>
 
 		<form id="topic-form" >
-	      <label for="topic-input">Add a Topic, Fool!</label>
+	      <label for="topic-input">Add a Topic!</label>
 	      <input type="text" id="topic-input"><br>
 
 	      <!-- Button triggers new topic to be added -->
-	      <input id="add-topic" type="submit" value="Add a Topic, Fool">
+	      <input id="add-topic" type="submit" value="Add a Topic!">
 	    </form>
 	</div>
 
@@ -48,21 +48,19 @@
 		$(function() {
 			var topics = ["antibody", "biology", "science", "bacteria", "molecule"];
 
-		
-
 			var $topicButtonsDiv = $("#topic_buttons");
 
 			for(var item in topics) {
 				var $topicButton = $("<button>" + topics[item] + "</button>");
 				$topicButton.attr("class", "topicButton");
 				
-				$topicButton.data("foobar", topics[item]);
+				$topicButton.data("word", topics[item]);
 				$topicButton.appendTo($topicButtonsDiv);
 			}
 
 			var displayImages = function() {
 				
-				var topic = $(this).data("foobar");
+				var topic = $(this).data("word");
 
 				var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + topic + "&api_key=dc6zaTOxFJmzC&limit=10";
 
@@ -120,7 +118,7 @@
 					var $topicButton = $("<button>" + topics[item] + "</button>");
 					$topicButton.attr("class", "topicButton");
 					
-					$topicButton.data("foobar", topics[item]);
+					$topicButton.data("word", topics[item]);
 					$topicButton.appendTo($topicButtonsDiv);
 				}
 		      }
